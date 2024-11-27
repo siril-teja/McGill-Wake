@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<InstronFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" FileSections="3" Version="1.0.0">
+  <Section index="0">
+    <Node name="SystemMap">
+      <Item name="VirtualHosts">
+        <Value xsi:type="ArrayOfString">
+          <string>PC</string>
+          <string>Linear</string>
+          <string>Rotary</string>
+        </Value>
+      </Item>
+      <Item name="PhysicalHosts">
+        <Value xsi:type="ArrayOfString">
+          <string>PC</string>
+          <string>Linear</string>
+          <string>Rotary</string>
+        </Value>
+      </Item>
+    </Node>
+  </Section>
+  <Section index="1">
+    <Node name="TestData">
+      <Item name="Time">
+        <Value xsi:type="xsd:double">119.72</Value>
+      </Item>
+      <Item name="TransferCount">
+        <Value xsi:type="xsd:long">1</Value>
+      </Item>
+      <Item name="Vectors">
+        <Value xsi:type="xsd:long">2994</Value>
+      </Item>
+      <Item name="ColumnNames">
+        <Value xsi:type="ArrayOfString">
+          <string>Vector</string>
+          <string>Total Time</string>
+          <string>Step</string>
+          <string>Linear:Transfer</string>
+          <string>Linear:WaveformStatus</string>
+          <string>Total Cycle Count(Linear Waveform)</string>
+          <string>Position(Linear:Position)</string>
+          <string>Load(Linear:Load)</string>
+          <string>Displacement(Linear:Digital Position)</string>
+          <string>Rotary:Transfer</string>
+          <string>Rotary:WaveformStatus</string>
+          <string>Total Cycle Count(Rotary Waveform)</string>
+          <string>Rotation(Rotary:Rotation)</string>
+          <string>Torque(Rotary:Torque)</string>
+          <string>Rotary Displacement(Rotary:Digital Rotation)</string>
+        </Value>
+      </Item>
+      <Item name="ColumnValues">
+        <Value xsi:type="ArrayOfDouble">
+          <double>2993</double>
+          <double>119.72</double>
+          <double>1</double>
+          <double>1</double>
+          <double>-1</double>
+          <double>1</double>
+          <double>0.020403057456782347</double>
+          <double>-3.7069618701934814</double>
+          <double>0.020401814733970805</double>
+          <double>1</double>
+          <double>1</double>
+          <double>2.75</double>
+          <double>-0.56646032476338759</double>
+          <double>-1.2168848887085915</double>
+          <double>-0.56649019169889392</double>
+        </Value>
+      </Item>
+    </Node>
+  </Section>
+  <Section index="2">
+    <Node name="TestSystem">
+      <Item name="TestStopReason">
+        <Value xsi:type="xsd:int">0</Value>
+      </Item>
+    </Node>
+    <Node name="Sequencer">
+      <Item name="CompletedStepCount">
+        <Value xsi:type="xsd:int">0</Value>
+      </Item>
+      <Item name="Step0">
+        <Value xsi:type="Node" name="Step0">
+          <Item name="SimpleCyclic - Rotary:WaveformGenerator">
+            <Value xsi:type="Node" name="SimpleCyclic - Rotary:WaveformGenerator">
+              <Item name="ElapsedQuarterCycleCount">
+                <Value xsi:type="xsd:long">7</Value>
+              </Item>
+            </Value>
+          </Item>
+          <Item name="StepAcquisitionFilter - PC:Acquisition Filter">
+            <Value xsi:type="Node" name="StepAcquisitionFilter - PC:Acquisition Filter">
+              <Item name="ChunkerActive">
+                <Value xsi:type="xsd:boolean">true</Value>
+              </Item>
+              <Item name="TotalCycleCount">
+                <Value xsi:type="xsd:long">1</Value>
+              </Item>
+              <Item name="ElapsedCycleCount">
+                <Value xsi:type="xsd:long">1</Value>
+              </Item>
+            </Value>
+          </Item>
+        </Value>
+      </Item>
+      <Item name="FinishedActions">
+        <Value xsi:type="ArrayOfString" />
+      </Item>
+    </Node>
+  </Section>
+</InstronFile>

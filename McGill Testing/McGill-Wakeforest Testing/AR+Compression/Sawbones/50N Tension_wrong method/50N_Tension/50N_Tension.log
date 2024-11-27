@@ -1,0 +1,26 @@
+17/09/2024,12:02:07 PM,50N_Tension,,60101,Log File Created
+17/09/2024,12:02:07 PM,50N_Tension,,60104,Software Version,1.6.332.0
+17/09/2024,12:02:07 PM,50N_Tension,,60105,Console Version,8.4.244
+17/09/2024,12:02:07 PM,50N_Tension,,60106,Controller Version,88.081600
+17/09/2024,12:02:07 PM,50N_Tension,,60107,User Name,Instron
+17/09/2024,12:02:07 PM,50N_Tension,,60108,Computer Name,BONE-CRUSHER
+17/09/2024,12:02:07 PM,50N_Tension,,60109,System Name,
+17/09/2024,12:02:07 PM,50N_Tension,,60110,Frame Serial Number (System ID),E10KNBR9840
+17/09/2024,12:02:35 PM,50N_Tension,Test1,60110,Test Started
+17/09/2024,12:02:50 PM,50N_Tension,Test1,8800120,A limit has been tripped (Console)
+17/09/2024,12:02:51 PM,50N_Tension,Test1,60201,Test Status,Test Paused Unexpectedly
+17/09/2024,12:02:51 PM,50N_Tension,Test1,60120,Total Time,14.32
+17/09/2024,12:02:51 PM,50N_Tension,Test1,60121,Total Cycle Count(Linear Waveform),0
+17/09/2024,12:02:51 PM,50N_Tension,Test1,60121,Total Cycle Count(Rotary Waveform),0
+17/09/2024,12:02:51 PM,50N_Tension,Test1,60122,Step,2,Step 2
+17/09/2024,12:02:51 PM,50N_Tension,Test1,60111,Test Paused
+17/09/2024,12:05:29 PM,50N_Tension,Test1,60103,Closed
+17/09/2024,12:05:41 PM,50N_Tension,,60102,Opened
+17/09/2024,12:05:41 PM,50N_Tension,,60104,Software Version,1.6.332.0
+17/09/2024,12:05:41 PM,50N_Tension,,60105,Console Version,8.4.244
+17/09/2024,12:05:41 PM,50N_Tension,,60106,Controller Version,88.081600
+17/09/2024,12:05:42 PM,50N_Tension,,60107,User Name,Instron
+17/09/2024,12:05:42 PM,50N_Tension,,60108,Computer Name,BONE-CRUSHER
+17/09/2024,12:05:42 PM,50N_Tension,,60109,System Name,
+17/09/2024,12:05:42 PM,50N_Tension,,60110,Frame Serial Number (System ID),E10KNBR9840
+17/09/2024,12:06:00 PM,50N_Tension,Test2,60103,Closed

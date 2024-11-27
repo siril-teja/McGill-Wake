@@ -1,0 +1,32 @@
+12/08/2024,4:00:57 PM,3DP_spec3_LB,,60101,Log File Created
+12/08/2024,4:00:57 PM,3DP_spec3_LB,,60104,Software Version,1.6.332.0
+12/08/2024,4:00:57 PM,3DP_spec3_LB,,60105,Console Version,8.4.244
+12/08/2024,4:00:57 PM,3DP_spec3_LB,,60106,Controller Version,88.081600
+12/08/2024,4:00:57 PM,3DP_spec3_LB,,60107,User Name,Instron
+12/08/2024,4:00:57 PM,3DP_spec3_LB,,60108,Computer Name,BONE-CRUSHER
+12/08/2024,4:00:57 PM,3DP_spec3_LB,,60109,System Name,
+12/08/2024,4:00:57 PM,3DP_spec3_LB,,60110,Frame Serial Number (System ID),E10KNBR9840
+12/08/2024,4:01:14 PM,3DP_spec3_LB,Test1,60110,Test Started
+12/08/2024,4:01:59 PM,3DP_spec3_LB,Test1,8800120,A limit has been tripped (Console)
+12/08/2024,4:01:59 PM,3DP_spec3_LB,Test1,60201,Test Status,Test Paused Unexpectedly
+12/08/2024,4:01:59 PM,3DP_spec3_LB,Test1,60120,Total Time,44.04
+12/08/2024,4:01:59 PM,3DP_spec3_LB,Test1,60121,Total Cycle Count(Linear Waveform),0
+12/08/2024,4:01:59 PM,3DP_spec3_LB,Test1,60121,Total Cycle Count(Rotary Waveform),0.5
+12/08/2024,4:01:59 PM,3DP_spec3_LB,Test1,60122,Step,1,Step 1
+12/08/2024,4:01:59 PM,3DP_spec3_LB,Test1,60111,Test Paused
+12/08/2024,4:02:27 PM,3DP_spec3_LB,Test1,60103,Closed
+12/08/2024,4:03:22 PM,3DP_spec3_LB,,60102,Opened
+12/08/2024,4:03:22 PM,3DP_spec3_LB,,60104,Software Version,1.6.332.0
+12/08/2024,4:03:22 PM,3DP_spec3_LB,,60105,Console Version,8.4.244
+12/08/2024,4:03:22 PM,3DP_spec3_LB,,60106,Controller Version,88.081600
+12/08/2024,4:03:22 PM,3DP_spec3_LB,,60107,User Name,Instron
+12/08/2024,4:03:22 PM,3DP_spec3_LB,,60108,Computer Name,BONE-CRUSHER
+12/08/2024,4:03:22 PM,3DP_spec3_LB,,60109,System Name,
+12/08/2024,4:03:22 PM,3DP_spec3_LB,,60110,Frame Serial Number (System ID),E10KNBR9840
+12/08/2024,4:03:40 PM,3DP_spec3_LB,Test2,60110,Test Started
+12/08/2024,4:06:42 PM,3DP_spec3_LB,Test2,60200,Test Status,Test Ended Normally
+12/08/2024,4:06:42 PM,3DP_spec3_LB,Test2,60120,Total Time,180.76
+12/08/2024,4:06:42 PM,3DP_spec3_LB,Test2,60121,Total Cycle Count(Linear Waveform),0
+12/08/2024,4:06:42 PM,3DP_spec3_LB,Test2,60121,Total Cycle Count(Rotary Waveform),3
+12/08/2024,4:06:42 PM,3DP_spec3_LB,Test2,60112,Test Finished
+12/08/2024,4:06:47 PM,3DP_spec3_LB,Test3,60103,Closed

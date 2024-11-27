@@ -1,0 +1,32 @@
+12/08/2024,2:29:43 PM,3DP_spec2_FE,,60101,Log File Created
+12/08/2024,2:29:43 PM,3DP_spec2_FE,,60104,Software Version,1.6.332.0
+12/08/2024,2:29:43 PM,3DP_spec2_FE,,60105,Console Version,8.4.244
+12/08/2024,2:29:43 PM,3DP_spec2_FE,,60106,Controller Version,88.081600
+12/08/2024,2:29:43 PM,3DP_spec2_FE,,60107,User Name,Instron
+12/08/2024,2:29:43 PM,3DP_spec2_FE,,60108,Computer Name,BONE-CRUSHER
+12/08/2024,2:29:43 PM,3DP_spec2_FE,,60109,System Name,
+12/08/2024,2:29:43 PM,3DP_spec2_FE,,60110,Frame Serial Number (System ID),E10KNBR9840
+12/08/2024,2:29:59 PM,3DP_spec2_FE,Test1,60110,Test Started
+12/08/2024,2:33:01 PM,3DP_spec2_FE,Test1,60200,Test Status,Test Ended Normally
+12/08/2024,2:33:01 PM,3DP_spec2_FE,Test1,60120,Total Time,180.76
+12/08/2024,2:33:01 PM,3DP_spec2_FE,Test1,60121,Total Cycle Count(Linear Waveform),0
+12/08/2024,2:33:01 PM,3DP_spec2_FE,Test1,60121,Total Cycle Count(Rotary Waveform),3
+12/08/2024,2:33:01 PM,3DP_spec2_FE,Test1,60112,Test Finished
+12/08/2024,2:33:06 PM,3DP_spec2_FE,Test2,60103,Closed
+12/08/2024,3:26:59 PM,3DP_spec2_FE,,60102,Opened
+12/08/2024,3:26:59 PM,3DP_spec2_FE,,60104,Software Version,1.6.332.0
+12/08/2024,3:26:59 PM,3DP_spec2_FE,,60105,Console Version,8.4.244
+12/08/2024,3:26:59 PM,3DP_spec2_FE,,60106,Controller Version,88.081600
+12/08/2024,3:26:59 PM,3DP_spec2_FE,,60107,User Name,Instron
+12/08/2024,3:26:59 PM,3DP_spec2_FE,,60108,Computer Name,BONE-CRUSHER
+12/08/2024,3:26:59 PM,3DP_spec2_FE,,60109,System Name,
+12/08/2024,3:26:59 PM,3DP_spec2_FE,,60110,Frame Serial Number (System ID),E10KNBR9840
+12/08/2024,3:27:16 PM,3DP_spec2_FE,Test2,60110,Test Started
+12/08/2024,3:29:37 PM,3DP_spec2_FE,Test2,880200,Waveform stopped unexpectedly
+12/08/2024,3:29:37 PM,3DP_spec2_FE,Test2,60201,Test Status,Test Paused Unexpectedly
+12/08/2024,3:29:37 PM,3DP_spec2_FE,Test2,60120,Total Time,137.28
+12/08/2024,3:29:37 PM,3DP_spec2_FE,Test2,60121,Total Cycle Count(Linear Waveform),0
+12/08/2024,3:29:37 PM,3DP_spec2_FE,Test2,60121,Total Cycle Count(Rotary Waveform),2.25
+12/08/2024,3:29:37 PM,3DP_spec2_FE,Test2,60122,Step,1,Step 1
+12/08/2024,3:29:37 PM,3DP_spec2_FE,Test2,60111,Test Paused
+12/08/2024,3:30:03 PM,3DP_spec2_FE,Test2,60103,Closed

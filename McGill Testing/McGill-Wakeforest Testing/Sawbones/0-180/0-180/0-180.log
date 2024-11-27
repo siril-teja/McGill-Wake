@@ -1,0 +1,47 @@
+17/09/2024,9:40:42 AM,0-180,,60101,Log File Created
+17/09/2024,9:40:42 AM,0-180,,60104,Software Version,1.6.332.0
+17/09/2024,9:40:42 AM,0-180,,60105,Console Version,8.4.244
+17/09/2024,9:40:42 AM,0-180,,60106,Controller Version,88.081600
+17/09/2024,9:40:42 AM,0-180,,60107,User Name,Instron
+17/09/2024,9:40:42 AM,0-180,,60108,Computer Name,BONE-CRUSHER
+17/09/2024,9:40:42 AM,0-180,,60109,System Name,
+17/09/2024,9:40:42 AM,0-180,,60110,Frame Serial Number (System ID),E10KNBR9840
+17/09/2024,9:42:07 AM,0-180,Test1,60110,Test Started
+17/09/2024,9:42:48 AM,0-180,Test1,8800120,A limit has been tripped (Console)
+17/09/2024,9:42:49 AM,0-180,Test1,60201,Test Status,Test Paused Unexpectedly
+17/09/2024,9:42:49 AM,0-180,Test1,60120,Total Time,40.4
+17/09/2024,9:42:49 AM,0-180,Test1,60121,Total Cycle Count(Linear Waveform),0
+17/09/2024,9:42:49 AM,0-180,Test1,60121,Total Cycle Count(Rotary Waveform),0
+17/09/2024,9:42:49 AM,0-180,Test1,60122,Step,3,Step 3
+17/09/2024,9:42:49 AM,0-180,Test1,60111,Test Paused
+17/09/2024,9:44:57 AM,0-180,Test1,60103,Closed
+17/09/2024,9:45:17 AM,0-180,,60102,Opened
+17/09/2024,9:45:17 AM,0-180,,60104,Software Version,1.6.332.0
+17/09/2024,9:45:17 AM,0-180,,60105,Console Version,8.4.244
+17/09/2024,9:45:17 AM,0-180,,60106,Controller Version,88.081600
+17/09/2024,9:45:17 AM,0-180,,60107,User Name,Instron
+17/09/2024,9:45:17 AM,0-180,,60108,Computer Name,BONE-CRUSHER
+17/09/2024,9:45:17 AM,0-180,,60109,System Name,
+17/09/2024,9:45:17 AM,0-180,,60110,Frame Serial Number (System ID),E10KNBR9840
+17/09/2024,9:46:23 AM,0-180,Test2,60110,Test Started
+17/09/2024,9:47:27 AM,0-180,Test2,60200,Test Status,Test Ended Normally
+17/09/2024,9:47:27 AM,0-180,Test2,60120,Total Time,63.52
+17/09/2024,9:47:27 AM,0-180,Test2,60121,Total Cycle Count(Linear Waveform),0
+17/09/2024,9:47:27 AM,0-180,Test2,60121,Total Cycle Count(Rotary Waveform),0
+17/09/2024,9:47:27 AM,0-180,Test2,60112,Test Finished
+17/09/2024,9:47:35 AM,0-180,Test3,60103,Closed
+17/09/2024,9:48:46 AM,0-180,,60102,Opened
+17/09/2024,9:48:46 AM,0-180,,60104,Software Version,1.6.332.0
+17/09/2024,9:48:46 AM,0-180,,60105,Console Version,8.4.244
+17/09/2024,9:48:46 AM,0-180,,60106,Controller Version,88.081600
+17/09/2024,9:48:46 AM,0-180,,60107,User Name,Instron
+17/09/2024,9:48:46 AM,0-180,,60108,Computer Name,BONE-CRUSHER
+17/09/2024,9:48:46 AM,0-180,,60109,System Name,
+17/09/2024,9:48:46 AM,0-180,,60110,Frame Serial Number (System ID),E10KNBR9840
+17/09/2024,9:49:30 AM,0-180,Test3,60110,Test Started
+17/09/2024,9:50:34 AM,0-180,Test3,60200,Test Status,Test Ended Normally
+17/09/2024,9:50:34 AM,0-180,Test3,60120,Total Time,63.52
+17/09/2024,9:50:34 AM,0-180,Test3,60121,Total Cycle Count(Linear Waveform),0
+17/09/2024,9:50:35 AM,0-180,Test3,60121,Total Cycle Count(Rotary Waveform),0
+17/09/2024,9:50:35 AM,0-180,Test3,60112,Test Finished
+17/09/2024,9:50:43 AM,0-180,Test4,60103,Closed

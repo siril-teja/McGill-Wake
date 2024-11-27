@@ -1,0 +1,15 @@
+12/08/2024,1:17:06 PM,3DP_spec1_FE,Test1,60101,Log File Created
+12/08/2024,1:17:06 PM,3DP_spec1_FE,Test1,60104,Software Version,1.6.332.0
+12/08/2024,1:17:06 PM,3DP_spec1_FE,Test1,60105,Console Version,8.4.244
+12/08/2024,1:17:06 PM,3DP_spec1_FE,Test1,60106,Controller Version,88.081600
+12/08/2024,1:17:06 PM,3DP_spec1_FE,Test1,60107,User Name,Instron
+12/08/2024,1:17:07 PM,3DP_spec1_FE,Test1,60108,Computer Name,BONE-CRUSHER
+12/08/2024,1:17:07 PM,3DP_spec1_FE,Test1,60109,System Name,
+12/08/2024,1:17:07 PM,3DP_spec1_FE,Test1,60110,Frame Serial Number (System ID),E10KNBR9840
+12/08/2024,1:17:07 PM,3DP_spec1_FE,Test1,60110,Test Started
+12/08/2024,1:22:09 PM,3DP_spec1_FE,Test1,60200,Test Status,Test Ended Normally
+12/08/2024,1:22:09 PM,3DP_spec1_FE,Test1,60120,Total Time,301.7664
+12/08/2024,1:22:09 PM,3DP_spec1_FE,Test1,60121,Total Cycle Count(Linear Waveform),0
+12/08/2024,1:22:09 PM,3DP_spec1_FE,Test1,60121,Total Cycle Count(Rotary Waveform),5
+12/08/2024,1:22:09 PM,3DP_spec1_FE,Test1,60112,Test Finished
+12/08/2024,1:22:09 PM,3DP_spec1_FE,Test1,60103,Closed
