@@ -47,6 +47,7 @@ def polarplot(t,r,c,s): # add in optional lim variable?
 pre_filename = r'C:\Users\emmac\Documents\SBES\Brown Lab\McGill\Data from Testing\McGill\McGill-Wakeforest Testing'
 folders = ['0-180', '105-285', '120-300', '135-315', '15-195',
            '150-330', '165-345', '30-210', '45-225', '60-240', '75-255', '90-270']
+ray_vals = ['0','180','105','285','120','300','135','315','15','195','150','330','165','345','30','210','45','225','60','240','75','255','90','270']
 folder_theta_vals = []
 theta_options = []
 for folder in folders:
@@ -65,9 +66,14 @@ specimen_dirs = ['McGill Spec 1', 'McGill Spec 2', 'McGill Spec 3', 'Sawbones']
 # Initialize a dictionary to hold the data for each specimen
 specimen_data_MG = {specimen: pd.DataFrame() for specimen in specimen_dirs}
 
+# Initialize an empty dictionary to store the data
+MG_data_summary = {}  # First column for Ray values
+#ray_vals_MG=[]
+    
 # Loop through each specimen and process the folders
 for specimen in specimen_dirs:
     all_data = []  # List to hold data for the current specimen
+    MG_data_summary[specimen] = []
     for folder in folders:
         # Define the path to the Test1.Stop file
         file_path = os.path.join(
@@ -90,25 +96,28 @@ for specimen in specimen_dirs:
             start = int(start)
             end = int(end)
             extracted_data['Theta'] = np.where(extracted_data['Rotation(Rotary:Rotation) (deg)'] >= 0, start, end)
+            #    extracted_data['DT']=np.append(np.diff(), 0) # probably don't need because DT should be basically zero, could help with NZ tho
             extracted_data['Test Torque'] = np.where((extracted_data['Theta'] >= 180) & (extracted_data['Theta'] <= 270), abs(extracted_data['Torque(Rotary:Torque) (N·m)']), -abs(extracted_data['Torque(Rotary:Torque) (N·m)']))
             extracted_data['Test Torque'] = np.where((extracted_data['Theta'] >= 0) & (extracted_data['Theta'] <= 90), abs(extracted_data['Torque(Rotary:Torque) (N·m)']), -abs(extracted_data['Torque(Rotary:Torque) (N·m)']))
+            extracted_data['DR']=np.append(np.diff(extracted_data['Test Torque']), 0) 
             #90 <= extracted_data['Theta'] >= 0
             #extracted_data['tf'] = np.where(extracted_data['Rotation(Rotary:Rotation) (deg)'] >= 0, 1, 0) 
             all_data.append(extracted_data)
             
+            #ray_vals_MG.append(start)
+            MG_data_summary[specimen].append(max(extracted_data.loc[extracted_data['Theta'] == start, 'Test Torque']))
+            #ray_vals_MG.append(end)
+            MG_data_summary[specimen].append(min(extracted_data.loc[extracted_data['Theta'] == end, 'Test Torque']))
+            
             # Plotting the data:
-# =============================================================================
-#             fig=plt.figure()
-#             plt.scatter(df['Torque(Rotary:Torque) (N·m)'],extracted_data['Rotation(Rotary:Rotation) (deg)'])
-#             plt.xlabel('Torque (Nm)')
-#             plt.ylabel('Rotation (deg)')
-#             plt.title(f'Torque vs Displacement Curve for {specimen} {folder}')
-#             # Save the file
-#             plt.savefig(os.path.join(r'C:\Users\emmac\Documents\SBES\Brown Lab\McGill\Processing Files\Figures', f'{specimen}_{folder}.png'))
-#         else:
-#             print(f"File not found: {file_path}")
-# =============================================================================
-
+            fig=plt.figure()
+            plt.scatter(df['Torque(Rotary:Torque) (N·m)'],extracted_data['Rotation(Rotary:Rotation) (deg)'])
+            plt.xlabel('Torque (Nm)')
+            plt.ylabel('Rotation (deg)')
+            plt.title(f'Torque vs Displacement Curve for {specimen} {folder}')
+            plt.savefig(os.path.join(r'C:\Users\emmac\Documents\SBES\Brown Lab\McGill\Processing Files\Figures', f'{specimen}_{folder}.png'))
+            plt.close()
+            
     # Combine all data for the specimen into a single dataframe
     specimen_data_MG[specimen] = pd.concat(all_data, ignore_index=True)
 
@@ -120,6 +129,14 @@ for specimen, data in specimen_data_MG.items():
     output_file = f"{specimen}_data.csv"
     data.to_csv(output_file, index=False)
     print(f"Saved data for {specimen} to {output_file}")
+    
+# Convert dictionary to Pandas DataFrame
+MG_dat_sum = pd.DataFrame(MG_data_summary,index=ray_vals)
+
+# Save as Excel or CSV
+MG_dat_sum.to_excel(f"{specimen}_summary_MG.xlsx", index=False)  # Save as an Excel file
+MG_dat_sum.to_csv(f"{specimen}_summary_MG.csv", index=False)  # Save as a CSV file
+
 
 # In[]:
 # To turn tests into XY grid
@@ -164,79 +181,6 @@ def surf_gen(df):
 
     tick_max=np.ceil(np.max(zv)) # for figure scaling, based on max expected stiffness
     return xv,yv,zv
-# In[]:
-# =============================================================================
-# xv,yv,zv=surf_gen(specimen_data_MG['McGill Spec 1'])
-# fig=plt.figure()
-# ax=fig.add_subplot(projection='3d')
-# ax.plot(xv,yv,zv)
-# =============================================================================
-# In[]:
-# Function version of above
-# HOLD FOR CONVEX HULL FUNCTIONS
-# =============================================================================
-# def compute_2D_convex_hull(pts_array):
-#     hull = ConvexHull(pts_array)
-#     return hull
-# 
-# def compute_3D_convex_hull(points3D):
-#     hull3D = ConvexHull(points3D)
-#     return hull3D
-# 
-# def convex_surf(df,surfx,surfy,surfz):
-#     curr_points=[df['LB_rot'].to_numpy().astype(float), df['FE_rot'].to_numpy().astype(float)]
-#     pts_array = np.column_stack(curr_points)
-#     # Convex Hull
-#     hull = ConvexHull(pts_array)
-#     
-#     xs = surfx.flatten()
-#     ys = surfy.flatten()
-#     zs = surfz.flatten()
-#     points3D = np.column_stack((xs, ys, zs))
-#     
-#     with ThreadPoolExecutor() as executor:
-#     
-#         with tqdm(total=2, desc="Computing Convex Hulls") as progress:
-#             future_2D_hull = executor.submit(compute_2D_convex_hull, pts_array)
-#             future_3D_hull = executor.submit(compute_3D_convex_hull, points3D)
-#     
-#             hull = future_2D_hull.result()
-#             progress.update(1)
-#     
-#             hull3D = future_3D_hull.result()
-#             progress.update(1)
-#     
-#     # To Polar
-#     xLim = np.array([pts_array[simplex, 0] for simplex in np.array(hull.vertices)])
-#     yLim = np.array([pts_array[simplex, 1] for simplex in np.array(hull.vertices)])
-#     #bound_r,bound_phi = cart2pol(xLim, yLim)
-#     
-#     # Generating the mask from the 2D convex hull for the 3D points
-#     path = Path(pts_array[hull.vertices])
-#     mask = path.contains_points(points3D[:, :2])
-#     
-#     # Applying the mask to filter 3D points
-#     masked_points3D = points3D[mask]
-#     tick_max=np.round(np.max(masked_points3D[:, 2]),1)
-#     
-#     # Plotting the filtered 3D points
-#     # fig = plt.figure(figsize=(10, 8))
-#     # ax = fig.add_subplot(111, projection='3d')
-#     # ax.scatter(masked_points3D[:, 0], masked_points3D[:, 1], masked_points3D[:, 2], c=masked_points3D[:, 2], marker="o", cmap="Reds")
-#     # ax.scatter(df['LB_rot'],df['FE_rot'],0,c='silver')
-#     # ax.set_xlabel('LB Loading (deg)')
-#     # ax.set_ylabel('FE Loading (deg)')
-#     # ax.set_zlabel('Stiffness (Nm/deg)')
-#     # ax.set_zlim(0,tick_max)
-#     # plt.title('3D Points within the 2D Convex Hull')
-#     # plt.show()
-#     return masked_points3D, xLim, yLim
-# =============================================================================
-
-# In[]:
-# Plotting the surface
-#masked_points3D, xLim, yLim = convex_surf(surf_df,xt,yt,zt)
-
 # In[]:
 # Plot slice behaviors from Wake Forest - functions
 # Get all test files in folder
@@ -333,6 +277,9 @@ for file_name in xlsx_files_list:
 
 specimen_data_WF = {specimen: pd.DataFrame() for specimen in specimen_dirs}
 
+# Initialize an empty dictionary to store the data
+WF_data_summary = {}  # First column for Ray values
+
 # Create a DataFrame of DataFrames
 #all_dataframe = pd.DataFrame() #pd.DataFrame.from_dict(dataframes_dict, orient='index')
 
@@ -348,6 +295,8 @@ for filename in xlsx_files_list:
             curr_specimen = specimen_dirs[i]  # Map to the corresponding specimen directory name
             all_data = []  # List to hold data for the current specimen
             break  # Break after finding the first match
+    
+    WF_data_summary[specimen] = []
     
     hybrid = 0 # 0 = Displacement control, 1 = Force control
     Time = pd.read_excel(filename,sheet_name='Timing.Sync Trigger') # Time
@@ -381,20 +330,15 @@ for filename in xlsx_files_list:
     
     extracted_data=pd.DataFrame()
     extracted_data['Theta-path-rad']=path_t
+#    extracted_data['DT']=np.append(path_dt, 0) # probably don't need because DT should be basically zero, could help with NZ tho
     extracted_data['Rho-path']=path_r
+    extracted_data['DR']=np.append(path_dr, 0)
     extracted_data['Rotation']=FR
     extracted_data['Load']=FL
     specimen_theta_vals=theta_round([x for x in theta_options if isinstance(x, int)], np.degrees(path_t))
 #    specimen_theta_vals=theta_round(np.array([float(value) for row in folder_theta_vals for value in (row[1], row[2])]).reshape(-1, 1),np.degrees(path_t))
     extracted_data['Theta']=specimen_theta_vals
     extracted_data['Folder'] = 0 
-    #matching_folders=[]
-    #extracted_data['Folder']=matching_folders
-# =============================================================================
-#     for item in folder_theta_vals:
-#         vals_to_update=np.where((specimen_theta_vals == item[1]) or (specimen_theta_vals == item[2]),item[0])
-#         extracted_data.loc(extracted_data['Folder'] == vals_to_update)
-# =============================================================================
          
     for item in folder_theta_vals:
         # Create a mask for rows in specimen_theta_vals that match item[1] or item[2]
@@ -410,41 +354,13 @@ for filename in xlsx_files_list:
            extracted_data.loc[matching_indices_low, 'Folder'] = item[0]
            extracted_data.loc[matching_indices_low, 'Load'] = -abs(extracted_data['Load']) #changed to neg
            extracted_data.loc[matching_indices_low, 'Rotation'] = -abs(extracted_data['Rotation']) #changed to neg
+           WF_data_summary[specimen].append(min(extracted_data.loc[matching_indices_low, 'Load']))
         if any(mask_high):  # Correct way to check for at least one match
           matching_indices_high = [i for i, is_match in enumerate(mask_high) if is_match]
           extracted_data.loc[matching_indices_high, 'Folder'] = item[0]
           extracted_data.loc[matching_indices_high, 'Load'] = abs(extracted_data['Load']) #changed to pos
           extracted_data.loc[matching_indices_high, 'Rotation'] = abs(extracted_data['Rotation']) #changed to pos
-
-# =============================================================================
-# def cart2pol_vel(x,y):
-#     [r,t]=cart2pol(x,y)
-#     dr=np.diff(r)
-#     dt=np.diff(t)
-#     return r,t,dr,dt
-# =============================================================================
-
-# =============================================================================
-#     for value in specimen_theta_vals:
-#         for item in folder_theta_vals:
-#             if specimen_theta_vals[value] == item[1] or specimen_theta_vals[value] == item[2]:
-#                 # Append the specific folder associated with the current item
-#                 matching_folders.append(item[0])  # Assuming item[0] corresponds to the folder name
-# =============================================================================
-# =============================================================================
-#     for value in specimen_theta_vals:
-#         # Iterate over all items in folder_theta_vals for each value
-#         found_match = False  # To track if any match is found for the current value
-#         for item in folder_theta_vals:
-#             # Check if either the 1st or 2nd value of item matches the current specimen_theta_val
-#             if specimen_theta_vals[value] == item[1] or specimen_theta_vals[value] == item[2]:
-#                 # Append the folder name (assumed to be item[0]) to the list of matching folders
-#                 matching_folders.append(item[0])  # Assuming item[0] holds the folder name
-#                 found_match = True  # Set flag to true if a match is found
-#             # Optionally, print or handle if no match was found for this value
-#             if not found_match:
-#                 print(f"No match found for specimen value: {value}")
-# =============================================================================
+          WF_data_summary[specimen].append(max(extracted_data.loc[matching_indices_high, 'Load']))
 
     extracted_data['Rho']=path_r
     all_data.append(extracted_data)
@@ -452,6 +368,14 @@ for filename in xlsx_files_list:
     #all_dataframe[curr_specimen] ={'Rotation':FR,'Load':FL,'Theta':path_t,'Rho':path_r}
     # Combine all data for the specimen into a single dataframe
     specimen_data_WF[curr_specimen] = pd.concat(all_data, ignore_index=True)
+
+# Convert dictionary to Pandas DataFrame
+WF_dat_sum = pd.DataFrame(WF_data_summary,index=ray_vals)
+
+# Save as Excel or CSV
+WF_dat_sum.to_excel(f"{specimen}_summary_WF.xlsx", index=False)  # Save as an Excel file
+WF_dat_sum.to_csv(f"{specimen}_summary_WF.csv", index=False)  # Save as a CSV file
+
 # In[]:
 # Architecture for actually comparing slices
 pos_list = {
