@@ -278,7 +278,8 @@ for file_name in xlsx_files_list:
 specimen_data_WF = {specimen: pd.DataFrame() for specimen in specimen_dirs}
 
 # Initialize an empty dictionary to store the data
-WF_data_summary = {}  # First column for Ray values
+WF_data_load_summary = {}  # First column for Ray values
+WF_data_disp_summary = {}  # First column for Ray values
 
 # Create a DataFrame of DataFrames
 #all_dataframe = pd.DataFrame() #pd.DataFrame.from_dict(dataframes_dict, orient='index')
@@ -296,7 +297,8 @@ for filename in xlsx_files_list:
             all_data = []  # List to hold data for the current specimen
             break  # Break after finding the first match
     
-    WF_data_summary[specimen] = []
+    WF_data_load_summary[specimen] = []
+    WF_data_disp_summary[specimen] = []
     
     hybrid = 0 # 0 = Displacement control, 1 = Force control
     Time = pd.read_excel(filename,sheet_name='Timing.Sync Trigger') # Time
@@ -352,15 +354,19 @@ for filename in xlsx_files_list:
         if any(mask_low):  # Correct way to check for at least one match
            matching_indices_low = [i for i, is_match in enumerate(mask_low) if is_match]
            extracted_data.loc[matching_indices_low, 'Folder'] = item[0]
+           extracted_data.loc[matching_indices_low, 'DR_flip'] = extracted_data['DR']
            extracted_data.loc[matching_indices_low, 'Load'] = -abs(extracted_data['Load']) #changed to neg
            extracted_data.loc[matching_indices_low, 'Rotation'] = -abs(extracted_data['Rotation']) #changed to neg
-           WF_data_summary[specimen].append(min(extracted_data.loc[matching_indices_low, 'Load']))
+           WF_data_load_summary[specimen].append(min(extracted_data.loc[matching_indices_low, 'Load']))
+           WF_data_disp_summary[specimen].append(min(extracted_data.loc[matching_indices_low, 'Rotation']))
         if any(mask_high):  # Correct way to check for at least one match
           matching_indices_high = [i for i, is_match in enumerate(mask_high) if is_match]
           extracted_data.loc[matching_indices_high, 'Folder'] = item[0]
+          extracted_data.loc[matching_indices_high, 'DR_flip'] = -extracted_data['DR']
           extracted_data.loc[matching_indices_high, 'Load'] = abs(extracted_data['Load']) #changed to pos
           extracted_data.loc[matching_indices_high, 'Rotation'] = abs(extracted_data['Rotation']) #changed to pos
-          WF_data_summary[specimen].append(max(extracted_data.loc[matching_indices_high, 'Load']))
+          WF_data_load_summary[specimen].append(max(extracted_data.loc[matching_indices_high, 'Load']))
+          WF_data_disp_summary[specimen].append(max(extracted_data.loc[matching_indices_high, 'Rotation']))
 
     extracted_data['Rho']=path_r
     all_data.append(extracted_data)
@@ -368,13 +374,18 @@ for filename in xlsx_files_list:
     #all_dataframe[curr_specimen] ={'Rotation':FR,'Load':FL,'Theta':path_t,'Rho':path_r}
     # Combine all data for the specimen into a single dataframe
     specimen_data_WF[curr_specimen] = pd.concat(all_data, ignore_index=True)
-
+# Ensure WF_data_summary is structured correctly
+WF_data_load_summary['angle'] = [val for row in folder_theta_vals for val in row[1:3]]
+WF_data_disp_summary['angle'] = [val for row in folder_theta_vals for val in row[1:3]]
 # Convert dictionary to Pandas DataFrame
-WF_dat_sum = pd.DataFrame(WF_data_summary,index=ray_vals)
+WF_dat_load_sum = pd.DataFrame(WF_data_load_summary,index=ray_vals)
+WF_dat_disp_sum = pd.DataFrame(WF_data_disp_summary,index=ray_vals)
 
 # Save as Excel or CSV
-WF_dat_sum.to_excel(f"{specimen}_summary_WF.xlsx", index=False)  # Save as an Excel file
-WF_dat_sum.to_csv(f"{specimen}_summary_WF.csv", index=False)  # Save as a CSV file
+WF_dat_load_sum.to_excel("specimens_load_summary_WF.xlsx", index=False)  # Save as an Excel file
+WF_dat_load_sum.to_csv("specimens_load_summary_WF.csv", index=False)  # Save as a CSV file
+WF_dat_disp_sum.to_excel("specimens_disp_summary_WF.xlsx", index=False)  # Save as an Excel file
+WF_dat_disp_sum.to_csv("specimens_disp_summary_WF.csv", index=False)  # Save as a CSV file
 
 # In[]:
 # Architecture for actually comparing slices
@@ -442,61 +453,66 @@ for i,specimen in enumerate(specimen_dirs):
 #                       wspace=4, 
 #                       hspace=4)
 plt.show()
-
 # In[]:
-import os
-import matplotlib.pyplot as plt
+# Hysteresis fitting!!! for just WF
 
-for i, specimen in enumerate(specimen_dirs):
-    # Create one big figure for this specimen
-    fig_big = plt.figure(figsize=(12, 12))
-    fig_big.suptitle(f'Combined FE-LB Loading Behavior for {specimen}', fontsize=20)
+for i,specimen in enumerate(specimen_dirs):
+    save_folder = r'C:\Users\emmac\Documents\SBES\Brown Lab\McGill\Processing Files\Hysteresis'
+    spec_folder = os.path.join(save_folder, specimen) # Create a new subfolder for the specimen
+    os.makedirs(spec_folder, exist_ok=True) # Ensure the directory exists
 
-    # Polar slice plot in the middle (row=1, col=1, spanning 3x3 grid spaces)
-    ax_pol = plt.subplot2grid((5, 5), (1, 1), colspan=3, rowspan=3, polar=True, figure=fig_big)
-    ax_pol.plot(specimen_data_WF[specimen]['Theta-path-rad'], specimen_data_WF[specimen]['Rho-path'], linewidth=2, color='black')
-
-    # Create the folder for saving images
-    save_folder = r'C:\Users\emmac\Documents\SBES\Brown Lab\McGill\Processing Files\Comparison Plots'
-    spec_folder = os.path.join(save_folder, specimen)
-    os.makedirs(spec_folder, exist_ok=True)
-
-    # Iterate through folders, alternating between subplots and standalone figures
-    for j, folder in enumerate(folders):
+    for folder in folders:
         # Get data from the MG and WF relevant slices
-        MG_subset = specimen_data_MG[specimen][specimen_data_MG[specimen]['Folder'] == folder]
-        WF_subset = specimen_data_WF[specimen][specimen_data_WF[specimen]['Folder'] == folder]
+        #MG_subset = specimen_data_MG[specimen][specimen_data_MG[specimen]['Folder'] == folder]
+        WF_fold_subset=specimen_data_WF[specimen][specimen_data_WF[specimen]['Folder'] == folder]
+        WF_hys_subset_med = WF_fold_subset[WF_fold_subset['DR_flip'] < 0]
+        WF_hys_subset_dist = WF_fold_subset[WF_fold_subset['DR_flip'] > 0]
+        # No == 0 condition
+        
+# =============================================================================
+# # Define sigmoid function
+# def sigmoid(x, a, b, c, d):
+#     return a / (1 + np.exp(-b * (x - c))) + d
+# 
+# # Fit sigmoid curves
+# popt1, _ = curve_fit(sigmoid, x_data, y_data1, p0=[50, 1, 5, 0])
+# popt2, _ = curve_fit(sigmoid, x_data, y_data2, p0=[50, 1, 5, 0])
+# 
+# # Define fitted functions
+# def sigmoid1(x): return sigmoid(x, *popt1)
+# def sigmoid2(x): return sigmoid(x, *popt2)
+# 
+# # Compute area between the curves
+# def area_between_curves(x):
+#     return sigmoid1(x) - sigmoid2(x)
+# 
+# area, _ = quad(area_between_curves, min(x_data), max(x_data))
+# 
+# # Plot the results
+# x_vals = np.linspace(min(x_data), max(x_data), 100)
+# plt.scatter(x_data, y_data1, color='blue', label="Upper Data")
+# plt.scatter(x_data, y_data2, color='red', label="Lower Data")
+# plt.plot(x_vals, sigmoid1(x_vals), 'b-', label="Fitted Upper Curve")
+# plt.plot(x_vals, sigmoid2(x_vals), 'r-', label="Fitted Lower Curve")
+# plt.fill_between(x_vals, sigmoid1(x_vals), sigmoid2(x_vals), color='gray', alpha=0.3, label=f"Area = {area:.2f}")
+# plt.legend()
+# plt.show()
+# =============================================================================
+        
+        
+        # Plot them both on the same figure, for saving to folder
+        plt.figure()
+#        plt.scatter(MG_subset['Torque(Rotary:Torque) (N·m)'],MG_subset['Rotation(Rotary:Rotation) (deg)'],c='#ED1B2F',s=20)
+        plt.scatter(WF_hys_subset_med['Load'],WF_hys_subset_med['Rotation'],c='#9E7E38',s=20)
+        plt.scatter(WF_hys_subset_dist['Load'],WF_hys_subset_dist['Rotation'],c='black',s=20)
+        plt.xlabel('Torque (Nm)')
+        plt.ylabel('Rotation (deg)')
+        plt.title(f'Torque vs Displacement Curve for {specimen} {folder}')
+        plt.legend(['Slice1','Slice2'])
+        # Save the file
+        plt.savefig(os.path.join(spec_folder, f'{specimen}_{folder}.png'))
+        plt.show()
+#        plt.close()
 
-        if j % 2 == 0:
-            # Plot as a subplot in fig_big using the pre-defined positions
-            if folder in pos_list["folders"]:
-                index = pos_list["folders"].index(folder)
-                row = pos_list["rows"][index]
-                col = pos_list["cols"][index]
-
-                ax_sub = plt.subplot2grid((5, 5), (row, col), figure=fig_big)
-                ax_sub.scatter(MG_subset['Torque(Rotary:Torque) (N·m)'], MG_subset['Rotation(Rotary:Rotation) (deg)'], c='#ED1B2F', s=20)
-                ax_sub.scatter(WF_subset['Load'], WF_subset['Rotation'], c='#9E7E38', s=20)
-                ax_sub.set_xlabel('Torque (Nm)')
-                ax_sub.set_ylabel('Rotation (deg)')
-                ax_sub.set_title(f'{folder}')
-                ax_sub.legend(['McGill', 'Wake'])
-
-        else:
-            # Create a separate figure
-            fig_single = plt.figure(figsize=(6, 4))
-            plt.scatter(MG_subset['Torque(Rotary:Torque) (N·m)'], MG_subset['Rotation(Rotary:Rotation) (deg)'])
-            plt.scatter(WF_subset['Load'], WF_subset['Rotation'])
-            plt.xlabel('Torque (Nm)')
-            plt.ylabel('Rotation (deg)')
-            plt.title(f'Torque vs Displacement Curve for {specimen} {folder}')
-            plt.legend(['McGill', 'Wake'])
-            
-            # Save the separate figure
-            plt.savefig(os.path.join(spec_folder, f'{specimen}_{folder}.png'))
-            plt.close(fig_single)  # Close the figure to free memory
-
-    # Save the big figure after all subplots are added
-    plt.savefig(os.path.join(spec_folder, f'{specimen}_combined.png'))
-    plt.close(fig_big)  # Close the big figure to free memory
-
+test_fit = pd.DataFrame({'load':WF_hys_subset_dist['Load'],'rot':WF_hys_subset_dist['Rotation']})
+test_fit.to_excel("testing.xlsx", index=False)  # Save as an Excel file
