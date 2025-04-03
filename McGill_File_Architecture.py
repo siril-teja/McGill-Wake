@@ -455,54 +455,24 @@ for i,specimen in enumerate(specimen_dirs):
 plt.show()
 # In[]:
 # Hysteresis fitting!!! for just WF
+WF_hysteresis_summary = {}
 
 for i,specimen in enumerate(specimen_dirs):
     save_folder = r'C:\Users\emmac\Documents\SBES\Brown Lab\McGill\Processing Files\Hysteresis'
     spec_folder = os.path.join(save_folder, specimen) # Create a new subfolder for the specimen
     os.makedirs(spec_folder, exist_ok=True) # Ensure the directory exists
-
+    WF_hysteresis_summary[specimen] = []
     for folder in folders:
         # Get data from the MG and WF relevant slices
         #MG_subset = specimen_data_MG[specimen][specimen_data_MG[specimen]['Folder'] == folder]
         WF_fold_subset=specimen_data_WF[specimen][specimen_data_WF[specimen]['Folder'] == folder]
+        WF_hysteresis_summary[specimen].append(abs(np.trapz(WF_fold_subset['Load'],WF_fold_subset['Rotation'])))
         WF_hys_subset_med = WF_fold_subset[WF_fold_subset['DR_flip'] < 0]
         WF_hys_subset_dist = WF_fold_subset[WF_fold_subset['DR_flip'] > 0]
         # No == 0 condition
         
-# =============================================================================
-# # Define sigmoid function
-# def sigmoid(x, a, b, c, d):
-#     return a / (1 + np.exp(-b * (x - c))) + d
-# 
-# # Fit sigmoid curves
-# popt1, _ = curve_fit(sigmoid, x_data, y_data1, p0=[50, 1, 5, 0])
-# popt2, _ = curve_fit(sigmoid, x_data, y_data2, p0=[50, 1, 5, 0])
-# 
-# # Define fitted functions
-# def sigmoid1(x): return sigmoid(x, *popt1)
-# def sigmoid2(x): return sigmoid(x, *popt2)
-# 
-# # Compute area between the curves
-# def area_between_curves(x):
-#     return sigmoid1(x) - sigmoid2(x)
-# 
-# area, _ = quad(area_between_curves, min(x_data), max(x_data))
-# 
-# # Plot the results
-# x_vals = np.linspace(min(x_data), max(x_data), 100)
-# plt.scatter(x_data, y_data1, color='blue', label="Upper Data")
-# plt.scatter(x_data, y_data2, color='red', label="Lower Data")
-# plt.plot(x_vals, sigmoid1(x_vals), 'b-', label="Fitted Upper Curve")
-# plt.plot(x_vals, sigmoid2(x_vals), 'r-', label="Fitted Lower Curve")
-# plt.fill_between(x_vals, sigmoid1(x_vals), sigmoid2(x_vals), color='gray', alpha=0.3, label=f"Area = {area:.2f}")
-# plt.legend()
-# plt.show()
-# =============================================================================
-        
-        
         # Plot them both on the same figure, for saving to folder
         plt.figure()
-#        plt.scatter(MG_subset['Torque(Rotary:Torque) (N·m)'],MG_subset['Rotation(Rotary:Rotation) (deg)'],c='#ED1B2F',s=20)
         plt.scatter(WF_hys_subset_med['Load'],WF_hys_subset_med['Rotation'],c='#9E7E38',s=20)
         plt.scatter(WF_hys_subset_dist['Load'],WF_hys_subset_dist['Rotation'],c='black',s=20)
         plt.xlabel('Torque (Nm)')
@@ -513,6 +483,8 @@ for i,specimen in enumerate(specimen_dirs):
         plt.savefig(os.path.join(spec_folder, f'{specimen}_{folder}.png'))
         plt.show()
 #        plt.close()
-
-test_fit = pd.DataFrame({'load':WF_hys_subset_dist['Load'],'rot':WF_hys_subset_dist['Rotation']})
-test_fit.to_excel("testing.xlsx", index=False)  # Save as an Excel file
+WF_hysteresis_summary['angle'] = [
+    val for row in folders for val in (row if isinstance(row, (list, tuple)) else [row])
+]
+hysteresis = pd.DataFrame(WF_hysteresis_summary)
+hysteresis.to_excel("hysteresis_data.xlsx", index=False)  # Save as an Excel file
