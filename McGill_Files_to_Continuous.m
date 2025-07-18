@@ -1,4 +1,5 @@
-clear
+%clear
+clearvars -except WF_style_data
 close all
 clc
 % Define base path
@@ -34,6 +35,7 @@ end
 % Define specimen directories
 specimen_dirs = {'McGill Spec 1', 'McGill Spec 2', 'McGill Spec 3', 'Sawbones'};
 specimen_dirs_ns = {'McGill_Spec_1', 'McGill_Spec_2', 'McGill_Spec_3', 'Sawbones'};
+specimen_dirs_match = {'McGill_Surrogate1', 'McGill_Surrogate2', 'McGill_Surrogate3', 'Sawbones'};
 specimen_data_MG = struct(); %containers.Map;
 MG_data_summary = struct(); %containers.Map();
 spec_hysteresis=struct();
@@ -98,7 +100,7 @@ for s = 1:length(specimen_dirs)
             hysteresis_areas{f,1}=folders{f};
             hysteresis_areas{f,2}= polyarea(extracted_data.Torque, extracted_data.Rotation);
             % Save figure
-            fig = figure;%('Visible', 'off');
+            fig = figure('Visible', 'off');
             scatter(extracted_data.Torque, extracted_data.Rotation, '.');
             xlabel('Torque (Nm)');
             ylabel('Rotation (deg)');
@@ -108,14 +110,16 @@ for s = 1:length(specimen_dirs)
             close(fig);
         end
     end
-    [xt,yt]=pol2cart(deg2rad(all_data.Theta),abs(all_data.Rotation));
+    [xt,yt]=pol2cart(deg2rad(all_data.Theta),abs(all_data.Rotation)); %+deg2rad(90)?
     MG_data_summary.(specimen_ns).Displacements=[xt yt];
    
-    figure;
+    compiled=figure;
     plot(xt,yt)
     title(['Data for Specimen ',specimen])
-    xlabel('Flexion Extension (deg)')
-    ylabel('Lateral Bending (deg)')
+    xlabel('Lateral Bending (deg)')
+    ylabel('Flexion Extension (deg)')
+    saveas(compiled, fullfile('C:\Users\emmac\Documents\SBES\Brown Lab\McGill\Processing Files\Figures', ...
+                [specimen, '_Compiled', '.png']));
 
     % Save combined data to CSV
     specimen_data_MG.(specimen_ns) = all_data;
@@ -133,7 +137,8 @@ cd('C:\Users\emmac\Documents\GitHub\PhD-Multiplanar-Code') % Navigate to where M
 peak_stiffnesses=struct();
 for i=1:nlen % iterate through all test files
     specimen_dirs_ns{i}
-    procedure_data(i).Filename=specimen_dirs_ns{i}; 
+    procedure_data(i).Filename=specimen_dirs_ns{i};
+    procedure_data(i).Filetag=specimen_dirs_match{i};
     peak_stiffnesses(i).Filename=specimen_dirs_ns{i};
     % Importing the data from the test file & storing it
     procedure_data(i).Displacements=MG_data_summary.(specimen_dirs_ns{i}).Displacements;
@@ -156,34 +161,35 @@ for i=1:nlen % iterate through all test files
     pgon_whole=polyshape(boundary_x, boundary_y);
     procedure_data(i).Centroid=centroid(pgon_whole);
     procedure_data(i).Area=polyarea(boundary_x,boundary_y);
-    % % Get inward & outward data (can change or add CW & CCW if desired)
-    % [in_load_plot,in_stiffness_plot,in_gradient_plot,inside_x_mesh,inside_y_mesh,inside_z_mesh,boundary_x,boundary_y,stiffness,delta_stiffness]=plot_cropped_boundary_stiffness(file_list(i).name,procedure_data(i),"in",segment);
-    % procedure_data(i).In_Mesh=[inside_x_mesh,inside_y_mesh,inside_z_mesh];
-    % procedure_data(i).In_Stiffness=stiffness;
-    % peak_stiffnesses(i).MaxIn=max(stiffness) 
-    % procedure_data(i).InDeltaStiffness=delta_stiffness;
-    % procedure_data(i).In_Boundary=[boundary_x,boundary_y];
-    % [out_load_plot,out_stiffness_plot,out_gradient_plot,inside_x_mesh,inside_y_mesh,inside_z_mesh,boundary_x,boundary_y,stiffness,delta_stiffness]=plot_cropped_boundary_stiffness(file_list(i).name,procedure_data(i),"out",segment);
-    % procedure_data(i).Out_Mesh=[inside_x_mesh,inside_y_mesh,inside_z_mesh];
-    % procedure_data(i).Out_Stiffness=stiffness;
-    % peak_stiffnesses(i).MaxOut=max(stiffness) 
-    % procedure_data(i).OutDeltaStiffness=delta_stiffness;
-    % procedure_data(i).Out_Boundary=[boundary_x,boundary_y];
-    % 
-    % % Save plots
-    % save_folder = fullfile(filepath, 'Figures', procedure_data(i).Filename);
-    % if ~exist(save_folder, 'dir')
-    %     mkdir(save_folder);
-    % end
-    % saveas(whole_load_plot, fullfile(save_folder,'Whole_Load.png'));
-    % saveas(whole_stiffness_plot, fullfile(save_folder,'Whole_Stiffness.png'));
-    % saveas(whole_gradient_plot, fullfile(save_folder,'Whole_Gradient.png'));
-    % saveas(in_load_plot, fullfile(save_folder,'In_Load.png'));
-    % saveas(in_stiffness_plot, fullfile(save_folder,'In_Stiffness.png'));
-    % saveas(in_gradient_plot, fullfile(save_folder,'In_Gradient.png'));
-    % saveas(out_load_plot, fullfile(save_folder,'Out_Load.png'));
-    % saveas(out_stiffness_plot, fullfile(save_folder,'Out_Stiffness.png'));
-    % saveas(out_gradient_plot, fullfile(save_folder,'Out_Gradient.png'));
+    % Get inward & outward data (can change or add CW & CCW if desired)
+    [in_load_plot,in_stiffness_plot,in_gradient_plot,inside_x_mesh,inside_y_mesh,inside_z_mesh,boundary_x,boundary_y,stiffness,delta_stiffness]=plot_cropped_boundary_McGill(procedure_data(i).Filename,procedure_data(i),"in",segment);
+    procedure_data(i).In_Mesh=[inside_x_mesh,inside_y_mesh,inside_z_mesh];
+    procedure_data(i).In_Stiffness=stiffness;
+    peak_stiffnesses(i).MaxIn=max(stiffness) 
+    procedure_data(i).InDeltaStiffness=delta_stiffness;
+    procedure_data(i).In_Boundary=[boundary_x,boundary_y];
+    [out_load_plot,out_stiffness_plot,out_gradient_plot,inside_x_mesh,inside_y_mesh,inside_z_mesh,boundary_x,boundary_y,stiffness,delta_stiffness]=plot_cropped_boundary_McGill(procedure_data(i).Filename,procedure_data(i),"out",segment);
+    procedure_data(i).Out_Mesh=[inside_x_mesh,inside_y_mesh,inside_z_mesh];
+    procedure_data(i).Out_Stiffness=stiffness;
+    peak_stiffnesses(i).MaxOut=max(stiffness) 
+    procedure_data(i).OutDeltaStiffness=delta_stiffness;
+    procedure_data(i).Out_Boundary=[boundary_x,boundary_y];
+
+    % Save plots
+    save_folder = fullfile(pre_filename, '\Figures\', procedure_data(i).Filename);
+    if ~exist(save_folder, 'dir')
+        mkdir(save_folder);
+    end
+    saveas(whole_load_plot, fullfile(save_folder,'Whole_Load.png'));
+    saveas(whole_stiffness_plot, fullfile(save_folder,'Whole_Stiffness.png'));
+    saveas(whole_gradient_plot, fullfile(save_folder,'Whole_Gradient.png'));
+    saveas(in_load_plot, fullfile(save_folder,'In_Load.png'));
+    saveas(in_stiffness_plot, fullfile(save_folder,'In_Stiffness.png'));
+    saveas(in_gradient_plot, fullfile(save_folder,'In_Gradient.png'));
+    saveas(out_load_plot, fullfile(save_folder,'Out_Load.png'));
+    saveas(out_stiffness_plot, fullfile(save_folder,'Out_Stiffness.png'));
+    saveas(out_gradient_plot, fullfile(save_folder,'Out_Gradient.png'));
 end
-% stiffpeaks=struct2table(peak_stiffnesses)
-% writetable(stiffpeaks, [filepath,'stiffness_peaks.csv']);
+MG_style_data=procedure_data;
+stiffpeaks=struct2table(peak_stiffnesses)
+writetable(stiffpeaks, [pre_filename,'stiffness_peaks.csv']);
