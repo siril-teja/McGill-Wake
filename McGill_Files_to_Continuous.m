@@ -74,6 +74,9 @@ for s = 1:length(specimen_dirs)
 
             % Zero the rotation
             extracted_data.Rotation = extracted_data.Rotation - extracted_data.Rotation(1);
+            if s==3
+                extracted_data.Rotation = -extracted_data.Rotation;
+            end
             extracted_data.Folder = repmat({folder}, height(extracted_data), 1);
 
             % Define theta based on rotation
@@ -129,7 +132,7 @@ for s = 1:length(specimen_dirs)
 end
 %%
 nlen = length(specimen_dirs);
-segment = [9 3.5];
+segment = [11 4];
 % Establish a struct for storing data
 procedure_data = struct('Filename',{},'Filetag',{},'Displacements',{},'Polar',{},'Loads',{},'Control',{},'Stiffness',{},'Time',{});
 
