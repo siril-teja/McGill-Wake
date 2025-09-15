@@ -1,6 +1,7 @@
 cd('C:\Users\emmac\Documents\GitHub\McGill-Wakeforest\')
 close all
-specimens_alt = {'McGill_Surrogate1', 'Sawbones','McGill_Surrogate2', 'McGill_Surrogate3'};
+%specimens_alt = {'McGill_Surrogate1', 'Sawbones','McGill_Surrogate2', 'McGill_Surrogate3'};
+specimens_alt = {'McGill_Surrogate1','McGill_Surrogate2', 'McGill_Surrogate3','Sawbones'};
 color_vals=[243 193 179;
     128 53 14;
     164 234 172;

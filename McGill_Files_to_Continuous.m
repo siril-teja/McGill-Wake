@@ -82,6 +82,9 @@ for s = 1:length(specimen_dirs)
             % Define theta based on rotation
             extracted_data.Theta(extracted_data.Rotation >= 0) = folder_theta_vals{f,2};
             extracted_data.Theta(extracted_data.Rotation < 0) = folder_theta_vals{f,3};
+            if s==4
+                extracted_data.Theta = extracted_data.Theta+90;
+            end
 
             % Define test torque
             TT = abs(extracted_data.Torque);
