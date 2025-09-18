@@ -1,6 +1,9 @@
-cd('C:\Users\emmac\Documents\arcmap_cli_v1_0_0rc2\example_datasets\McGill_WF_SPM')
+% without sawbones
+%cd('C:\Users\emmac\Documents\arcmap_cli_v1_0_0rc2\example_datasets\McGill_WF_SPM')
+% with sawbones
+cd('C:\Users\emmac\Documents\SBES\Brown Lab\McGill\Data from Testing\McGill\McGill-Wakeforest Testing\SPM Prep')
 tvals=linspace(0,165,(165/15)+1);
-styles={'-','--',':'};
+styles={'-','--',':',"-."};
 specs = {'Surrogate1', 'Surrogate2', 'Surrogate3', 'Sawbones'};
 hysteresis_areas={};
 for p=1:length(tvals)
@@ -37,6 +40,8 @@ for p=1:length(tvals)
     cd ..
     saveas(gcf, [num2str(tvals(p)),'_Comparison_AMSurrogate.png']);
 end
+
+writecell(hysteresis_areas, fullfile(save_folder,'hysteresis.csv'));
 
 CM=[248 32 33]./255;
 CW=[140 109 44]./255;
