@@ -11,7 +11,17 @@ labels = {
     'Deformed Inward', 
     'Deformed Outward'
 };
-
+for j=1:nlen
+    if contains(file_list(j).name, "Intact", 'IgnoreCase', true)
+        tag = tag + "_Intact";
+        color = [0 0 0]./255;
+        procedure_data(j).Color = color;
+    elseif contains(file_list(j).name, "Deformed", 'IgnoreCase', true)
+        tag = tag + "_Deformed";
+        color = [255 0 0]./255;
+        procedure_data(j).Color = color;
+    end
+end
 for j=1:nlen % for each file
     procedure_data(j).Filename
     hysteresis_areas={};
@@ -114,7 +124,7 @@ for j=1:nlen % for each file
         dM_dTheta_out = abs(polyval(results_out(7:10), r_fit_out));
         normStiff_out = abs(dM_dTheta_out / max(dM_dTheta_out)); % Normalize stiffness for thresholding
  
-%        plot(r_fit_out,z_fit_plot_out,'--','Color',color_vals(j,:), 'LineWidth', 2,'DisplayName',strcat(procedure_data(j).Filetag,' Outward Data')); 
+        %plot(r_fit_out,z_fit_plot_out,'--','Color',color_vals(j,:), 'LineWidth', 2,'DisplayName',strcat(procedure_data(j).Filetag,' Outward Data')); 
         plot(r_fit_out,z_fit_plot_out,'--','Color',procedure_data(j).Color, 'LineWidth', 2,'DisplayName',strcat(procedure_data(j).Filetag,' Outward Data')); 
  
         xlabel('Rotation (°)');
@@ -153,7 +163,7 @@ for j=1:nlen % for each file
         % Optional: set background color to transparent (if exporting)
         set(gca, 'Color', 'none');
         hold off;
-        saveas(figure(b), fullfile(save_folder,[num2str(rad2deg(input_angle)),'_Slice_Plot.png']));
+        saveas(figure(b), fullfile(save_folder,[num2str(rad2deg(input_angle)),'_Slice_Plot2.png']));
     end
     procedure_data(j).IndexData=index_data;
     procedure_data(j).Hysteresis=hysteresis_areas;
