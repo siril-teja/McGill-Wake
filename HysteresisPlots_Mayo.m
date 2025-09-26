@@ -1,23 +1,42 @@
-%% In-Out Slice Focus
+%% In-Out Slice Focus by Trajectory Type
 close all;
 index_data=struct();
 nfit=200;
 % Define symbolic styles
-colors = [0 0 0; 255 0 0] ./ 255; % Intact (orange), Deformed (green)
+colors = [0 0 0; 255 0 0; 0 0 255] ./ 255; % Intact (orange), Deformed (green)
 styles = {'-', '--'}; % Inward (solid), Outward (dashed)
+% labels = {
+%     'Intact Inward', 
+%     'Intact Outward', 
+%     'Deformed Inward', 
+%     'Deformed Outward'
+% };
 labels = {
     'Intact Inward', 
     'Intact Outward', 
-    'Deformed Inward', 
-    'Deformed Outward'
+    'SL Inward', 
+    'SL Outward',
+    'FL Inward', 
+    'FL Outward',
 };
+line_counter=1;
 for j=1:nlen
+    color = [0 0 0]./255;
+    procedure_data(j).Color = color;
     if contains(file_list(j).name, "Intact", 'IgnoreCase', true)
         tag = tag + "_Intact";
         color = [0 0 0]./255;
         procedure_data(j).Color = color;
-    elseif contains(file_list(j).name, "Deformed", 'IgnoreCase', true)
-        tag = tag + "_Deformed";
+    % elseif contains(file_list(j).name, "Deformed", 'IgnoreCase', true)
+    %     tag = tag + "_Deformed";
+    %     color = [255 0 0]./255;
+    %     procedure_data(j).Color = color;
+    elseif contains(file_list(j).name, "Sel Lam", 'IgnoreCase', true)
+        tag = tag + "_Sel_Lam";
+        color = [0 0 255]./255;
+        procedure_data(j).Color = color;
+    elseif contains(file_list(j).name, "Full", 'IgnoreCase', true)
+        tag = tag + "_Full_Lam";
         color = [255 0 0]./255;
         procedure_data(j).Color = color;
     end
@@ -80,7 +99,8 @@ for j=1:nlen % for each file
         % Plot
         %current_plot=figure;
         figure(b);
-        set(gcf,'Position',[250 250 1100 500])
+        set(gcf,'Position',[250 250 1300 400])
+        %set(gcf,'Position',[250 250 1100 500])
         hold on;
         if contains(procedure_data(j).Filetag, "Petals_CW", 'IgnoreCase', true)
             subplot(2,3,1)
@@ -102,14 +122,46 @@ for j=1:nlen % for each file
             subplot(2,3,3)
             title('Rays')
             hold on;
+        elseif contains(procedure_data(j).Filetag, "Petals", 'IgnoreCase', true)
+            subplot(1,4,1)
+            title('Petals')
+            hold on;
+        elseif contains(procedure_data(j).Filetag, "Circles", 'IgnoreCase', true)
+            subplot(1,4,2)
+            title('Circles')
+            hold on;
+        elseif contains(procedure_data(j).Filetag, "Lines", 'IgnoreCase', true)
+            subplot(1,4,3)
+            title('Lines')
+            hold on;
         else
         end
-        xlim([-20,15])
-        ylim([-10,10])
+        xlim([-40,20])
+        ylim([-4,4])
         %plot(r_fit_in,z_fit_plot_in, 'Color',color_vals(j,:), 'LineWidth', 2,'DisplayName',strcat(procedure_data(j).Filetag,' Inward Data')); 
         plot(r_fit_in,z_fit_plot_in, 'Color',procedure_data(j).Color, 'LineWidth', 2,'DisplayName',strcat(procedure_data(j).Filetag,' Inward Data')); 
-        hold on;       
+        hold on;   
+        % Find max and min values and their indices
+        [max_val, max_idx] = max(r_fit_in);
+        [min_val, min_idx] = min(r_fit_in);
         
+        % Get corresponding r values
+        max_z = z_fit_plot_in(max_idx);
+        min_z = z_fit_plot_in(min_idx);
+        
+        % Annotate max and min values
+        %text(max_r + 0.1, max_val, sprintf('Max: %.2f', max_val), 'Color', procedure_data(j).Color);
+        %text(min_r - 0.1, min_val, sprintf('Min: %.2f', min_val), 'Color', procedure_data(j).Color);
+        
+        % Optionally store values for later table
+        summary_table(line_counter).Filetag = procedure_data(j).Filename;
+        summary_table(line_counter).Angle=input_angle;
+        summary_table(line_counter).MaxValueIn = max_val;
+        summary_table(line_counter).MaxPositionIn = max_z;
+        summary_table(line_counter).MinValueIn = min_val;
+        summary_table(line_counter).MinPositionIn = min_z;
+        summary_table(line_counter).InROM=max_val-min_val;
+
         % Outward
         [points_out,results_out]=angle_slicer_s(procedure_data(j).Out_Mesh(:,1),procedure_data(j).Out_Mesh(:,2),procedure_data(j).Out_Mesh(:,3),procedure_data(j).Out_Stiffness(:),input_angle,tol_deg); % input_angle is degrees, tolerance is degrees
         index_data(b).Out_Points=points_out;
@@ -127,6 +179,25 @@ for j=1:nlen % for each file
         %plot(r_fit_out,z_fit_plot_out,'--','Color',color_vals(j,:), 'LineWidth', 2,'DisplayName',strcat(procedure_data(j).Filetag,' Outward Data')); 
         plot(r_fit_out,z_fit_plot_out,'--','Color',procedure_data(j).Color, 'LineWidth', 2,'DisplayName',strcat(procedure_data(j).Filetag,' Outward Data')); 
  
+        % Find max and min values and their indices
+        [max_val_out, max_idx_out] = max(r_fit_out);
+        [min_val_out, min_idx_out] = min(r_fit_out);
+        
+        % Get corresponding r values
+        max_z_out = z_fit_plot_out(max_idx_out);
+        min_z_out = z_fit_plot_out(min_idx_out);
+        
+        % Annotate max and min values
+        %text(max_r_out + 0.1, max_val, sprintf('Max: %.2f', max_val_out), 'Color', procedure_data(j).Color);
+        %text(min_r_out - 0.1, min_val, sprintf('Min: %.2f', min_val_out), 'Color', procedure_data(j).Color);
+        
+        % Optionally store values for later table
+        summary_table(line_counter).MaxValueOut = max_val_out;
+        summary_table(line_counter).MaxPositionOut = max_z_out;
+        summary_table(line_counter).MinValueOut = min_val_out;
+        summary_table(line_counter).MinPositionOut = min_z_out;
+        summary_table(line_counter).OutROM=max_val_out-min_val_out;
+
         xlabel('Rotation (°)');
         ylabel('Moment (Nm)');
         ylim([-segment(1),segment(1)])
@@ -145,7 +216,8 @@ for j=1:nlen % for each file
             mkdir(save_folder);
         end
         % Add symbolic legend to subplot 6
-        subplot(2,3,6); % Focus on the 6th subplot
+        subplot(1,4,4)
+        % subplot(2,3,6); % Focus on the 6th subplot
         hold on;
         
         % Create dummy lines for legend
@@ -154,6 +226,8 @@ for j=1:nlen % for each file
         dummyLines(2) = plot(nan, nan, 'Color', colors(1,:), 'LineStyle', styles{2},'LineWidth',2);
         dummyLines(3) = plot(nan, nan, 'Color', colors(2,:), 'LineStyle', styles{1},'LineWidth',2);
         dummyLines(4) = plot(nan, nan, 'Color', colors(2,:), 'LineStyle', styles{2},'LineWidth',2);
+        dummyLines(5) = plot(nan, nan, 'Color', colors(3,:), 'LineStyle', styles{1},'LineWidth',2);
+        dummyLines(6) = plot(nan, nan, 'Color', colors(3,:), 'LineStyle', styles{2},'LineWidth',2);
         
         legend(dummyLines, labels, 'Location', 'best');
         % Remove axes ticks and labels
@@ -164,14 +238,17 @@ for j=1:nlen % for each file
         set(gca, 'Color', 'none');
         hold off;
         saveas(figure(b), fullfile(save_folder,[num2str(rad2deg(input_angle)),'_Slice_Plot2.png']));
+        line_counter=line_counter+1;
     end
     procedure_data(j).IndexData=index_data;
     procedure_data(j).Hysteresis=hysteresis_areas;
+    line_counter=line_counter+1;
 end
 % for b=b:-1:1
 %     saveas(figure(b), fullfile(save_folder,[num2str(rad2deg(theta_axes(b))),'_Slice_Plot.png']));
 % end
-
+table_ROMs=struct2table(summary_table);
+writetable(table_ROMs, [filepath,'ROMs.csv']);
 %% Hysteresis Area Plots
 % Plotting Hysteresis Areas as Bar Chart
 % Extract x-values and convert from radians to degrees
@@ -203,3 +280,239 @@ xticklabels(arrayfun(@(x) sprintf('%.0f', x), x_vals, 'UniformOutput', false));
 xlabel('Slice Angle (deg)');
 ylabel('Hysteresis Area')
 saveas(bfig, fullfile(save_folder,'Hysteresis_Areas.png'));
+
+%% In-Out Slice Focus by Surgical State
+close all;
+index_data=struct();
+nfit=200;
+% Define symbolic styles
+colors = [0 0 0; 255 0 0; 0 0 255] ./ 255; % Intact (orange), Deformed (green)
+styles = {'-', '--'}; % Inward (solid), Outward (dashed)
+% % labels = {
+% %     'Intact Inward', 
+% %     'Intact Outward', 
+% %     'Deformed Inward', 
+% %     'Deformed Outward'
+% % };
+labels = {
+    'Rays Inward', 
+    'Rays Outward', 
+    'Petals Inward', 
+    'Petals Outward',
+    'Circles Inward', 
+    'Circles Outward',
+};
+line_counter=1;
+for j=1:nlen
+    % color = [0 0 0]./255;
+    % procedure_data(j).Color = color;
+    if contains(file_list(j).name, "Intact", 'IgnoreCase', true)
+        procedure_data(j).Filetag = procedure_data(j).Filetag + "_Intact";
+        % color = [0 0 0]./255;
+        % procedure_data(j).Color = color;
+    % elseif contains(file_list(j).name, "Deformed", 'IgnoreCase', true)
+    %     tag = tag + "_Deformed";
+    %     color = [255 0 0]./255;
+    %     procedure_data(j).Color = color;
+    elseif contains(file_list(j).name, "Sel", 'IgnoreCase', true)
+        procedure_data(j).Filetag = procedure_data(j).Filetag + "_Sel_Lam";
+        % color = [0 0 255]./255;
+        % procedure_data(j).Color = color;
+    elseif contains(file_list(j).name, "Full", 'IgnoreCase', true)
+        procedure_data(j).Filetag = procedure_data(j).Filetag + "_Full_Lam";
+        % color = [255 0 0]./255;
+        % procedure_data(j).Color = color;
+    else
+        procedure_data(j).Filetag = procedure_data(j).Filetag + "_Intact";
+        % color = [255 0 0]./255;
+        % procedure_data(j).Color = color;
+    end
+end
+for j=1:nlen % for each file
+    procedure_data(j).Filename
+    hysteresis_areas={};
+    step_deg=15;
+    tol_deg=3;           % tolerance around each axis in degrees
+    step_rad=deg2rad(step_deg);
+    tol_rad=deg2rad(tol_deg);
+    % Create axis directions: 0 to just under 2*pi, step by step_rad
+    theta_axes = 0:step_rad:(pi-step_rad);
+    
+    % Plot of downselected rays
+    theta_ds = [];
+    r_ds = [];
+
+    % Need to add explementary axes
+    for k = 1:length(theta_axes)
+        axis_angle = theta_axes(k);
+        exp_angle = mod(axis_angle + pi, 2*pi);  % Wrap to [0, 2*pi)
+
+        theta_unwrapped=procedure_data(j).Polar(:,1);
+
+        % Wrap theta to [0, 2*pi)
+        theta_wrapped = mod(theta_unwrapped, 2*pi);
+
+        % Find points within tolerance of current axis
+        %mask = abs(wrapToPi(theta_wrapped - axis_angle)) <= tol_rad;
+        mask_primary = abs(wrapToPi(theta_wrapped - axis_angle)) <= tol_rad;
+        mask_exp = abs(wrapToPi(theta_wrapped - exp_angle)) <= tol_rad;
+        mask = mask_primary | mask_exp;
+
+        % Append matching points
+        theta_ds = [theta_ds; theta_unwrapped(mask)];
+        r_vals=procedure_data(j).Polar(:,2);
+        r_ds = [r_ds; r_vals(mask)];
+    end
+    procedure_data(j).IndexSlices=[theta_ds r_ds];
+    for b=1:length(theta_axes)
+        input_angle=theta_axes(b);
+        index_data(b).Angle = input_angle; % may also be able to use theta_deg from angle_slicer function
+        
+        % Inward
+        [points_in,results_in]=angle_slicer_s(procedure_data(j).In_Mesh(:,1),procedure_data(j).In_Mesh(:,2),procedure_data(j).In_Mesh(:,3),procedure_data(j).In_Stiffness(:),input_angle,tol_deg); % input_angle is radians, tolerance is degrees
+        index_data(b).In_Points=points_in;
+        index_data(b).In_Results=results_in;
+        d2 = [6*results_in(2), 2*results_in(3)]; %second derivative
+        inflection_x_in = -results_in(3) / (3*results_in(2)); % Find inflection point
+        inflection_y_in = polyval(results_in(2:5), inflection_x_in);
+        [inflection_t_in,inflection_r_in]=cart2pol(inflection_x_in,inflection_y_in);
+        index_data(b).In_Inflection=[inflection_x_in inflection_y_in inflection_t_in inflection_r_in];
+
+        r_fit_in = linspace(min(points_in(:,1)), max(points_in(:,1)), nfit); % Theta
+        z_fit_plot_in = polyval(results_in(2:5), r_fit_in); % Moment
+        dM_dTheta_in = abs(polyval(results_in(7:10), r_fit_in)); 
+        normStiff_in = abs(dM_dTheta_in / max(dM_dTheta_in)); % Normalize stiffness for thresholding
+
+        % Plot
+        %current_plot=figure;
+        figure(b);
+        set(gcf,'Position',[250 250 1300 400])
+        %set(gcf,'Position',[250 250 1100 500])
+        hold on;
+        if contains(procedure_data(j).Filetag, "Intact", 'IgnoreCase', true)
+            subplot(1,4,1)
+            title('Intact State')
+            hold on;
+        elseif contains(procedure_data(j).Filetag, "Sel_Lam", 'IgnoreCase', true)
+            subplot(1,4,2)
+            title('SL State')
+            hold on;
+        elseif contains(procedure_data(j).Filetag, "Full_Lam", 'IgnoreCase', true)
+            subplot(1,4,3)
+            title('FL State')
+            hold on;
+        else
+        end
+        if contains(procedure_data(j).Filetag, "Petals", 'IgnoreCase', true) procedure_data(j).Color=colors(2,:);
+        elseif contains(procedure_data(j).Filetag, "Circles", 'IgnoreCase', true) procedure_data(j).Color=colors(3,:);
+        elseif contains(procedure_data(j).Filetag, "Lines", 'IgnoreCase', true) procedure_data(j).Color=colors(1,:);
+        elseif contains(procedure_data(j).Filetag, "Rays", 'IgnoreCase', true) procedure_data(j).Color=colors(1,:);
+        end
+        xlim([-40,20])
+        ylim([-4,4])
+        %plot(r_fit_in,z_fit_plot_in, 'Color',color_vals(j,:), 'LineWidth', 2,'DisplayName',strcat(procedure_data(j).Filetag,' Inward Data')); 
+        plot(r_fit_in,z_fit_plot_in, 'Color',procedure_data(j).Color, 'LineWidth', 2,'DisplayName',strcat(procedure_data(j).Filetag,' Inward Data')); 
+        hold on;   
+        % Find max and min values and their indices
+        [max_val, max_idx] = max(r_fit_in);
+        [min_val, min_idx] = min(r_fit_in);
+        
+        % Get corresponding r values
+        max_z = z_fit_plot_in(max_idx);
+        min_z = z_fit_plot_in(min_idx);
+        
+        % Annotate max and min values
+        %text(max_r + 0.1, max_val, sprintf('Max: %.2f', max_val), 'Color', procedure_data(j).Color);
+        %text(min_r - 0.1, min_val, sprintf('Min: %.2f', min_val), 'Color', procedure_data(j).Color);
+        
+        % Optionally store values for later table
+        % summary_table(line_counter).Filetag = procedure_data(j).Filename;
+        % summary_table(line_counter).Angle=input_angle;
+        % summary_table(line_counter).MaxValueIn = max_val;
+        % summary_table(line_counter).MaxPositionIn = max_z;
+        % summary_table(line_counter).MinValueIn = min_val;
+        % summary_table(line_counter).MinPositionIn = min_z;
+        % summary_table(line_counter).InROM=max_val-min_val;
+
+        % Outward
+        [points_out,results_out]=angle_slicer_s(procedure_data(j).Out_Mesh(:,1),procedure_data(j).Out_Mesh(:,2),procedure_data(j).Out_Mesh(:,3),procedure_data(j).Out_Stiffness(:),input_angle,tol_deg); % input_angle is degrees, tolerance is degrees
+        index_data(b).Out_Points=points_out;
+        index_data(b).Out_Results=results_out;
+        inflection_x = -results_out(3) / (3*results_out(2)); % Find inflection point
+        inflection_y = polyval(results_out(2:5), inflection_x);
+        [inflection_t,inflection_r]=cart2pol(inflection_x,inflection_y);
+        index_data(b).Out_Inflection=[inflection_x inflection_y inflection_t inflection_r];
+
+        r_fit_out = linspace(min(points_out(:,1)), max(points_out(:,1)), nfit); % Theta
+        z_fit_plot_out = polyval(results_out(2:5), r_fit_out); % Moment
+        dM_dTheta_out = abs(polyval(results_out(7:10), r_fit_out));
+        normStiff_out = abs(dM_dTheta_out / max(dM_dTheta_out)); % Normalize stiffness for thresholding
+ 
+        %plot(r_fit_out,z_fit_plot_out,'--','Color',color_vals(j,:), 'LineWidth', 2,'DisplayName',strcat(procedure_data(j).Filetag,' Outward Data')); 
+        plot(r_fit_out,z_fit_plot_out,'--','Color',procedure_data(j).Color, 'LineWidth', 2,'DisplayName',strcat(procedure_data(j).Filetag,' Outward Data')); 
+ 
+        % Find max and min values and their indices
+        [max_val_out, max_idx_out] = max(r_fit_out);
+        [min_val_out, min_idx_out] = min(r_fit_out);
+        
+        % Get corresponding r values
+        max_z_out = z_fit_plot_out(max_idx_out);
+        min_z_out = z_fit_plot_out(min_idx_out);
+        
+        % Annotate max and min values
+        %text(max_r_out + 0.1, max_val, sprintf('Max: %.2f', max_val_out), 'Color', procedure_data(j).Color);
+        %text(min_r_out - 0.1, min_val, sprintf('Min: %.2f', min_val_out), 'Color', procedure_data(j).Color);
+        
+        % Optionally store values for later table
+        % summary_table(line_counter).MaxValueOut = max_val_out;
+        % summary_table(line_counter).MaxPositionOut = max_z_out;
+        % summary_table(line_counter).MinValueOut = min_val_out;
+        % summary_table(line_counter).MinPositionOut = min_z_out;
+        % summary_table(line_counter).OutROM=max_val_out-min_val_out;
+
+        xlabel('Rotation (°)');
+        ylabel('Moment (Nm)');
+        ylim([-segment(1),segment(1)])
+        % ylim([-2.5,2.5])
+        %legend show
+        %legend('Day 1 First In','Day 1 First Out','Day 1 Last In','Day 1 Last Out','Day 2 First In','Day 2 First Out','Day 2 Last In','Day 2 Last Out','Day 3 First In','Day 3 First Out','Day 3 Last In','Day 3 Last Out')
+        %legend('Location','eastoutside','Interpreter','none')
+        %title([procedure_data(j).Filename,' Inward & Outward Data for ',num2str(rad2deg(input_angle))],'Interpreter','none');
+        sgtitle(['Inward & Outward Data for ',num2str(rad2deg(input_angle))],'Interpreter','none');
+        grid on;
+        hysteresis_areas{b,1}=input_angle;
+        hysteresis_areas{b,2}=abs(trapz(points_in(:,1),points_in(:,2))-trapz(points_out(:,1),points_out(:,2)));
+
+        save_folder = fullfile(filepath, 'Comparison Figures');
+        if ~exist(save_folder, 'dir')
+            mkdir(save_folder);
+        end
+        % Add symbolic legend to subplot 6
+        subplot(1,4,4)
+        % subplot(2,3,6); % Focus on the 6th subplot
+        hold on;
+        
+        % Create dummy lines for legend
+        dummyLines = gobjects(1,4);
+        dummyLines(1) = plot(nan, nan, 'Color', colors(1,:), 'LineStyle', styles{1},'LineWidth',2);
+        dummyLines(2) = plot(nan, nan, 'Color', colors(1,:), 'LineStyle', styles{2},'LineWidth',2);
+        dummyLines(3) = plot(nan, nan, 'Color', colors(2,:), 'LineStyle', styles{1},'LineWidth',2);
+        dummyLines(4) = plot(nan, nan, 'Color', colors(2,:), 'LineStyle', styles{2},'LineWidth',2);
+        dummyLines(5) = plot(nan, nan, 'Color', colors(3,:), 'LineStyle', styles{1},'LineWidth',2);
+        dummyLines(6) = plot(nan, nan, 'Color', colors(3,:), 'LineStyle', styles{2},'LineWidth',2);
+        
+        legend(dummyLines, labels, 'Location', 'best');
+        % Remove axes ticks and labels
+        axis off;
+        % Optional: remove box around the axes
+        box off;
+        % Optional: set background color to transparent (if exporting)
+        set(gca, 'Color', 'none');
+        hold off;
+        saveas(figure(b), fullfile(save_folder,[num2str(rad2deg(input_angle)),'_Slice_Plot_State.png']));
+        line_counter=line_counter+1;
+    end
+    % procedure_data(j).IndexData=index_data;
+    % procedure_data(j).Hysteresis=hysteresis_areas;
+    line_counter=line_counter+1;
+end
