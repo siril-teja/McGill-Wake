@@ -199,3 +199,102 @@ end
 MG_style_data=procedure_data;
 stiffpeaks=struct2table(peak_stiffnesses)
 writetable(stiffpeaks, [pre_filename,'stiffness_peaks.csv']);
+
+%% AR - Comp Specific Analysis - McGill
+% Define base path
+pre_filename = 'C:\Users\emmac\Documents\SBES\Brown Lab\McGill\Data from Testing\McGill\McGill-Wakeforest Testing\AR+Compression\';
+
+% Define folders (as cell array of character vectors)
+folders = {'50N Tension','25N Tension','0N', '25N Compression', '50N Compression', ...
+           '75N Compression', '100N Compression', '125N Compression', ...
+           '150N Compression', '175N Compression', '200N Compression'};
+subfolders = {'50N_Tension','25N_Tension','0', '25N_Compression', '50N_Compression', ...
+           '75N_Compression', '100N_Compression', '125N_Compression', ...
+           '150N_Compression', '175N_Compression', '200N_Compression'};
+numbers = zeros(1, numel(folders));
+
+% Define specimen directories
+specimen_dirs = {'McGill Spec 1', 'McGill Spec 2', 'McGill Spec 3', 'Sawbones'};
+specimen_dirs_ns = {'McGill_Spec_1', 'McGill_Spec_2', 'McGill_Spec_3', 'Sawbones'};
+specimen_dirs_match = {'McGill_Surrogate1', 'McGill_Surrogate2', 'McGill_Surrogate3', 'Sawbones'};
+specimen_data_MG = struct();
+
+for s = 1:length(specimen_dirs)
+    specimen = specimen_dirs{s};
+    specimen_ns = specimen_dirs_ns{s};
+    all_data = [];
+    %MG_data_summary.(specimen_ns) = [];
+    
+    for f = 1:length(folders)
+        numStr = regexp(folders{f}, '\d+', 'match');
+        if ~isempty(numStr)
+            numbers(f) = str2double(numStr{1});
+        end
+        if contains(folders{f}, 'Tension', 'IgnoreCase', true)
+            numbers(f) = -numbers(f);
+        end
+        file_path = fullfile(pre_filename, specimen, folders{f}, subfolders{f}, 'Test1');
+        file_path_w_file = fullfile(file_path, 'Test1.Stop.csv');
+
+        if isfile(file_path_w_file)
+            % Try to read the CSV with default encoding
+            try
+                df = readtable(file_path_w_file);
+            catch
+                warning(['Could not read file: ', file_path_w_file]);
+                continue;
+            end
+
+            % Extract and adjust data
+            try
+                extracted_data = df(:, {'TotalTime_s_', ...
+                    'Rotation_Rotary_Rotation__deg_', ...
+                    'Torque_Rotary_Torque__N_m_'});
+                extracted_data.Properties.VariableNames = {'Time', 'Rotation', 'Torque'};
+            catch
+                warning(['Columns missing in file: ', file_path_w_file]);
+                continue;
+            end
+
+            % Zero the rotation
+            extracted_data.Rotation = extracted_data.Rotation - extracted_data.Rotation(1);
+            % figure(f);
+            % plot(extracted_data.Rotation,extracted_data.Torque)
+            % title(num2str(f))
+            extracted_data.Compression=numbers(f)*ones(height(extracted_data),1);
+            % Append data
+            all_data = [all_data; extracted_data];
+            
+        end
+    end
+   
+    step=0.01; 
+    gx=min(all_data.Rotation):step:max(all_data.Rotation);
+    gy=min(all_data.Compression):5:max(all_data.Compression);
+    g=gridfit(all_data.Rotation,all_data.Compression,all_data.Torque,gx,gy);
+        
+    % Plotting the gridfit
+    ARC=figure;
+    surf(gx,gy,abs(g))
+    colormap(hsv(256))
+    %camlight right
+    %lighting phong
+    shading interp
+    title([string(specimen_dirs{s}),' AR-Compression Heatmap'],'Interpreter','none')
+    xlabel({'Axial Rotation (deg)', '\bf <- Right AR -, Left AR + ->'}, 'FontSize', 12)
+    xlim([min(gx) max(gx)])
+    ylabel({'Superior Force (N)', '\bf <- Tension -, Compression + ->'}, 'FontSize', 12)
+    ylim([min(gy) max(gy)])
+    zlabel('Axial Rotation Torque (Nm)')
+    zlim([0 10])
+    cb = colorbar(); 
+    caxis([0 10]); %to standardize colorbar
+    ylabel(cb,'Axial Rotation Torque (Nm)','FontSize',14,'Rotation',270)
+    view(0,90)
+
+    save_folder = fullfile(filepath, 'Figures', string(specimen_dirs{s}));
+    if ~exist(save_folder, 'dir')
+        mkdir(save_folder);
+    end
+    saveas(ARC, fullfile(save_folder,'ARC_plot.png'));    
+end
