@@ -202,6 +202,7 @@ writetable(stiffpeaks, [pre_filename,'stiffness_peaks.csv']);
 
 %% AR - Comp Specific Analysis - McGill
 % Define base path
+ARpath='C:\Users\emmac\Documents\SBES\Brown Lab\McGill\AR_Comp_Tests\MG\'
 pre_filename = 'C:\Users\emmac\Documents\SBES\Brown Lab\McGill\Data from Testing\McGill\McGill-Wakeforest Testing\AR+Compression\';
 
 % Define folders (as cell array of character vectors)
@@ -292,9 +293,10 @@ for s = 1:length(specimen_dirs)
     ylabel(cb,'Axial Rotation Torque (Nm)','FontSize',14,'Rotation',270)
     view(0,90)
 
-    save_folder = fullfile(filepath, 'Figures', string(specimen_dirs{s}));
+    save_folder = fullfile(ARpath, 'Figures', string(specimen_dirs{s}));
     if ~exist(save_folder, 'dir')
         mkdir(save_folder);
     end
-    saveas(ARC, fullfile(save_folder,'ARC_plot.png'));    
+    %saveas(ARC, fullfile(save_folder,'ARC_plot.png'));  
+    savefig(ARC, fullfile(save_folder,'ARC_plot_modify.fig'));  
 end
