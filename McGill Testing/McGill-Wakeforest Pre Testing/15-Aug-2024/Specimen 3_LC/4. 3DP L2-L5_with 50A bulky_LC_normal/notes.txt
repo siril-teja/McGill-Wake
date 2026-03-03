@@ -1,4 +1,0 @@
-From Folder#4, the tests are as per the protocol developed according to "LC VS DC and Effect of speed" study.
-
-
-The tests are only done in Flexion-Extension
