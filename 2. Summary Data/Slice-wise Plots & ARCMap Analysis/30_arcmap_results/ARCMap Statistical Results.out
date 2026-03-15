@@ -1,0 +1,57 @@
+
+        ___    ____  ________  ___               ________    ____    
+       /   |  / __ \/ ____/  |/  /___ _____     / ____/ /   /  _/    
+      / /| | / /_/ / /   / /|_/ / __ `/ __ \   / /   / /    / /      
+     / ___ |/ _, _/ /___/ /  / / /_/ / /_/ /  / /___/ /____/ /       
+    /_/  |_/_/ |_|\____/_/  /_/\__,_/ .___/   \____/_____/___/       
+                                   /_/                               
+
+                ARCMap Command Line Interface, 1.0.0rc.2                
+           (c) 2025 Arcus Analytica Inc. All Rights Reserved.           
+
+------------------------------------------------------------------------
+|  ARCMap CLI is provided as is and without warranty. The developers   |
+|  assume no responsibility for the validity, accuracy, or             |
+|  applicability of results obtained from ARCMap. Users are            |
+|  responsible for verifying their results. Please refer to the        |
+|  documentation for more license information.                         |
+------------------------------------------------------------------------
+
+Test Parameters
+-----------------------------------------
+Test Type: Two-sample Hotelling's T-squared Test
+Significance: 0.05
+
+Arc-length Re-parameterization Parameters
+-----------------------------------------
+Number of resample points: 500
+Corridor grid resolution: 500 points per axis
+Minimum corridor size (visual only): 0 times of maximum corridor size
+
+Registration Parameters
+-----------------------------------------
+Number of interior warping points: 4
+Warping penalty factor: 0.001
+
+Inputted Signals
+-----------------------------------------
+Set ID: McGill
+    MG_30\McGill_Surrogate1_30.csv
+    MG_30\McGill_Surrogate2_30.csv
+    MG_30\McGill_Surrogate3_30.csv
+
+Set ID: Wake Forest
+    WF_30\McGill_Surrogate1_30.csv
+    WF_30\McGill_Surrogate2_30.csv
+    WF_30\McGill_Surrogate3_30.csv
+
+
+Results of ARCMap Inference
+-----------------------------------------
+Statistical Field: Hotelling's T-squared Field
+Field roughness (FHWM): 44.5599
+Critical map threshold: 924.8392
+
+Suggested action: do not reject null hypothesis 
+A significant difference likely does not exist between sets
+No clusters of significance found
